@@ -1,0 +1,88 @@
+# Prerequisites
+*.d
+
+# Object files
+*.o
+*.ko
+*.obj
+*.elf
+
+# Linker output
+*.ilk
+*.map
+*.exp
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Libraries
+*.lib
+*.a
+*.la
+*.lo
+
+# Shared objects (inc. Windows DLLs)
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Executables
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# Kernel Module Compile Results
+*.mod*
+*.cmd
+.tmp_versions/
+Mkfile.old
+dkms.conf
+
+.history/
+
+*.crf
+*.axf
+*.iex
+*.map
+*.htm
+*.lnp
+*.sct
+*.dep
+*.lst
+*.scvd
+
+MDK/Listings/
+MDK/Objects/
+MDK/RTE/
+
+*.csv
+*.xlsx
+
+/test/build
+
+# CMake build directory
+build/
+cmake-build-*/
+
+# CMake cache
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+
+# Generated binary files
+*.bin
+
+# MDK GUI layout and debug options (user-specific)
+*.uvguix*
+*.uvoptx
