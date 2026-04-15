@@ -14,7 +14,23 @@
 /* Private variables */
 volatile uint32_t tick = 0;
 SPI_HandleTypeDef hspi1;
+TIM_HandleTypeDef htim2;
 uint8_t Image_BW[5000];  /* Frame buffer: 200 x 200 / 8 = 5000 bytes */
+
+/* Software PWM duty cycle (0-99), shared between main loop and TIM6 ISR */
+volatile uint8_t pwm_duty = 0;
+
+/* Breathing effect lookup table: half-cosine wave, 64 points, range 0-99 */
+static const uint8_t breath_table[64] = {
+     0,  0,  1,  2,  4,  6,  8, 11,
+    15, 18, 22, 27, 31, 34, 38, 41,
+    50, 54, 59, 64, 68, 73, 77, 81,
+    85, 88, 91, 93, 95, 97, 98, 99,
+    99, 99, 98, 97, 95, 93, 91, 88,
+    85, 81, 77, 73, 68, 64, 59, 54,
+    50, 41, 38, 34, 31, 27, 22, 18,
+    15, 11,  8,  6,  4,  2,  1,  0,
+};
 
 /* Private function prototypes */
 void SystemClock_Config(void);
@@ -38,6 +54,10 @@ int main(void)
     /* Initialize SPI1 */
     MX_SPI1_Init();
 
+    /* Initialize TIM2 for software PWM breathing LED */
+    MX_TIM2_Init();
+    HAL_TIM_Base_Start_IT(&htim2);
+
     /* Initialize EPD and display "hello AI" */
     EPD_Init();
     Paint_NewImage(Image_BW, EPD_WIDTH, EPD_HEIGHT, ROTATE_0, EPD_WHITE);
@@ -45,14 +65,17 @@ int main(void)
     EPD_ShowString(56, 90, (const uint8_t *)"hello AI", 16, EPD_BLACK);
     EPD_Display(Image_BW);
 
+    /* Breathing LED main loop */
+    uint8_t breath_idx = 0;
+
     while (1)
     {
-        /* Toggle LED every 500ms */
         uint32_t now = HAL_GetTick();
-        if (now - tick >= 500)
+        if (now - tick >= 20)
         {
             tick = now;
-            HAL_GPIO_TogglePin(LED_GPIO_PORT, LED_PIN);
+            breath_idx = (breath_idx + 1) & 0x3F;  /* 0-63 wrap around */
+            pwm_duty = breath_table[breath_idx];
         }
     }
 }
@@ -164,6 +187,24 @@ void MX_SPI1_Init(void)
     hspi1.Init.CRCPolynomial = 10;
 
     if (HAL_SPI_Init(&hspi1) != HAL_OK)
+    {
+        Error_Handler();
+    }
+}
+
+/**
+ * @brief  TIM2 Initialization
+ *         10kHz interrupt for software PWM (100 steps, 100Hz PWM freq)
+ *         APB1 timer clock = 100MHz, PSC=99 -> 1MHz, ARR=99 -> 10kHz
+ */
+void MX_TIM2_Init(void)
+{
+    htim2.Instance = TIM2;
+    htim2.Init.Prescaler = 99;
+    htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
+    htim2.Init.Period = 99;
+    htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+    if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
     {
         Error_Handler();
     }

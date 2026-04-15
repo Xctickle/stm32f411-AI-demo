@@ -74,7 +74,8 @@ if not exist "%ELF_FILE%" (
 
 echo.
 echo [烧录] OpenOCD ...
-openocd -f "%OPENOCD_CFG" -c "program %ELF_FILE% verify reset exit" || goto :error
+set "ELF_FWD=%ELF_FILE:\=/%"
+openocd -f "%OPENOCD_CFG%" -c "program %ELF_FWD% verify reset exit" || goto :error
 
 echo.
 echo ============================================

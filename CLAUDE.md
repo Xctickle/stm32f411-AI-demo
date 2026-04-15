@@ -1,7 +1,7 @@
 # STM32F411 AI Demo 项目
 
 ## 项目概述
-STM32F411CEU6 (Black Pill) 基础工程模板，当前功能：LED 闪烁 (PC13)、1.54 寸电子墨水屏显示。
+STM32F411CEU6 (Black Pill) 基础工程模板，当前功能：LED 呼吸灯 (PC13)、1.54 寸电子墨水屏显示。
 
 ## 构建系统
 
@@ -76,7 +76,7 @@ openocd -f openocd.cfg -c "program build/Template_STM32F411.elf verify reset exi
 ## 引脚定义
 | 功能 | 引脚 | 说明 |
 |------|------|------|
-| LED | PC13 | Active Low (Black Pill) |
+| LED | PC13 | Active Low (Black Pill), 软件 PWM 呼吸灯 |
 | SPI1_SCK | PA5 | AF5, 电子墨水屏时钟 |
 | SPI1_MOSI | PA7 | AF5, 电子墨水屏数据 |
 | EPD_CS | PB0 | GPIO 输出, 片选 |
@@ -84,7 +84,18 @@ openocd -f openocd.cfg -c "program build/Template_STM32F411.elf verify reset exi
 | EPD_RST | PB1 | GPIO 输出, 复位 |
 | EPD_BUSY | PA6 | GPIO 输入, 忙碌检测 |
 
+> PC13 没有 TIM 通道映射，无法使用硬件 PWM，采用 TIM2 中断驱动软件 PWM 实现呼吸灯。
+
 ## 外设配置
+
+### TIM2 (呼吸灯软件 PWM)
+- 用途: PC13 LED 呼吸灯（PC13 无 TIM 通道，使用定时器中断做软件 PWM）
+- 时钟: APB1 定时器时钟 = 100MHz
+- 分频: PSC=99 (100 分频 -> 1MHz)
+- 周期: ARR=99 (100 计数 -> 10kHz 中断)
+- PWM 分辨率: 100 步 (0-99), PWM 频率 100Hz
+- 呼吸效果: 64 点半余弦查表, 每 20ms 更新占空比, 呼吸周期 1.28s
+- 中断: TIM2_IRQn, 优先级 0
 
 ### SPI1 (电子墨水屏)
 - 模式: Master, TX-only (1-line)

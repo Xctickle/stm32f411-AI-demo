@@ -37,9 +37,12 @@
 
 /* Exported variables */
 extern SPI_HandleTypeDef hspi1;
+extern TIM_HandleTypeDef htim2;
+extern volatile uint8_t pwm_duty;
 
 /* Exported functions */
 void Error_Handler(void);
 void MX_SPI1_Init(void);
+void MX_TIM2_Init(void);
 
 #endif /* __MAIN_H */
