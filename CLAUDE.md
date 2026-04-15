@@ -1,7 +1,7 @@
 # STM32F411 AI Demo 项目
 
 ## 项目概述
-STM32F411CEU6 (Black Pill) 基础工程模板，当前功能：LED 闪烁 (PC13)。
+STM32F411CEU6 (Black Pill) 基础工程模板，当前功能：LED 闪烁 (PC13)、1.54 寸电子墨水屏显示。
 
 ## 构建系统
 
@@ -77,12 +77,33 @@ openocd -f openocd.cfg -c "program build/Template_STM32F411.elf verify reset exi
 | 功能 | 引脚 | 说明 |
 |------|------|------|
 | LED | PC13 | Active Low (Black Pill) |
+| SPI1_SCK | PA5 | AF5, 电子墨水屏时钟 |
+| SPI1_MOSI | PA7 | AF5, 电子墨水屏数据 |
+| EPD_CS | PB0 | GPIO 输出, 片选 |
+| EPD_DC | PB2 | GPIO 输出, 数据/命令 |
+| EPD_RST | PB1 | GPIO 输出, 复位 |
+| EPD_BUSY | PA6 | GPIO 输入, 忙碌检测 |
+
+## 外设配置
+
+### SPI1 (电子墨水屏)
+- 模式: Master, TX-only (1-line)
+- 时钟: APB2/32 = 3.125 MHz
+- CPOL=Low, CPHA=1Edge, 8-bit MSB
+- 软件 NSS 管理
+
+### 电子墨水屏 (1.54寸, SSD1680)
+- 分辨率: 200x200
+- 帧缓冲区: 5000 字节 (RAM)
+- 驱动文件: `App/Drivers/epd.c`, `epd.h`, `epd_font.h`
+- 通信: 硬件 SPI1 + GPIO 控制引脚
 
 ## 项目结构
 ```
 ├── App/
 │   ├── Inc/main.h, stm32f4xx_hal_conf.h
-│   └── Src/main.c, stm32f4xx_it.c, stm32f4xx_hal_msp.c, system_stm32f4xx.c
+│   ├── Src/main.c, stm32f4xx_it.c, stm32f4xx_hal_msp.c, system_stm32f4xx.c
+│   └── Drivers/epd.c, epd.h, epd_font.h   # 电子墨水屏驱动
 ├── Libraries/
 │   ├── STM32F4xx_HAL_Driver/
 │   ├── Device/ST/STM32F4xx/

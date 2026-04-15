@@ -9,9 +9,12 @@
 
 /* Includes */
 #include "main.h"
+#include "epd.h"
 
 /* Private variables */
 volatile uint32_t tick = 0;
+SPI_HandleTypeDef hspi1;
+uint8_t Image_BW[5000];  /* Frame buffer: 200 x 200 / 8 = 5000 bytes */
 
 /* Private function prototypes */
 void SystemClock_Config(void);
@@ -31,6 +34,16 @@ int main(void)
 
     /* Initialize GPIO */
     GPIO_Init();
+
+    /* Initialize SPI1 */
+    MX_SPI1_Init();
+
+    /* Initialize EPD and display "hello AI" */
+    EPD_Init();
+    Paint_NewImage(Image_BW, EPD_WIDTH, EPD_HEIGHT, ROTATE_0, EPD_WHITE);
+    EPD_Clear(EPD_WHITE);
+    EPD_ShowString(56, 90, (const uint8_t *)"hello AI", 16, EPD_BLACK);
+    EPD_Display(Image_BW);
 
     while (1)
     {
@@ -129,3 +142,29 @@ void assert_failed(uint8_t *file, uint32_t line)
     (void)line;
 }
 #endif
+
+/**
+ * @brief  SPI1 Initialization
+ *         Master mode, TX-only (1-line), 8-bit data, Software NSS
+ *         CPOL=Low, CPHA=1Edge, Prescaler=32 (~3.125 MHz)
+ */
+void MX_SPI1_Init(void)
+{
+    hspi1.Instance = SPI1;
+    hspi1.Init.Mode = SPI_MODE_MASTER;
+    hspi1.Init.Direction = SPI_DIRECTION_1LINE;
+    hspi1.Init.DataSize = SPI_DATASIZE_8BIT;
+    hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
+    hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
+    hspi1.Init.NSS = SPI_NSS_SOFT;
+    hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_32;
+    hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
+    hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
+    hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
+    hspi1.Init.CRCPolynomial = 10;
+
+    if (HAL_SPI_Init(&hspi1) != HAL_OK)
+    {
+        Error_Handler();
+    }
+}

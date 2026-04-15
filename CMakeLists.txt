@@ -25,6 +25,7 @@ set(STARTUP_FILE
 set(INCLUDE_DIRS
     # 应用层头文件
     ${CMAKE_SOURCE_DIR}/App/Inc
+    ${CMAKE_SOURCE_DIR}/App/Drivers
 
     # STM32F411 CMSIS
     ${CMAKE_SOURCE_DIR}/Libraries/Device/ST/STM32F4xx/Include
@@ -48,6 +49,7 @@ set(APP_SOURCES
     ${CMAKE_SOURCE_DIR}/App/Src/main.c
     ${CMAKE_SOURCE_DIR}/App/Src/stm32f4xx_it.c
     ${CMAKE_SOURCE_DIR}/App/Src/stm32f4xx_hal_msp.c
+    ${CMAKE_SOURCE_DIR}/App/Drivers/epd.c
 )
 
 # 系统初始化
@@ -69,6 +71,7 @@ set(HAL_SOURCES
     ${CMAKE_SOURCE_DIR}/Libraries/STM32F4xx_HAL_Driver/src/stm32f4xx_hal_pwr_ex.c
     ${CMAKE_SOURCE_DIR}/Libraries/STM32F4xx_HAL_Driver/src/stm32f4xx_hal_rcc.c
     ${CMAKE_SOURCE_DIR}/Libraries/STM32F4xx_HAL_Driver/src/stm32f4xx_hal_rcc_ex.c
+    ${CMAKE_SOURCE_DIR}/Libraries/STM32F4xx_HAL_Driver/src/stm32f4xx_hal_spi.c
     ${CMAKE_SOURCE_DIR}/Libraries/STM32F4xx_HAL_Driver/src/stm32f4xx_hal_tim.c
     ${CMAKE_SOURCE_DIR}/Libraries/STM32F4xx_HAL_Driver/src/stm32f4xx_hal_tim_ex.c
     ${CMAKE_SOURCE_DIR}/Libraries/STM32F4xx_HAL_Driver/src/stm32f4xx_hal_uart.c

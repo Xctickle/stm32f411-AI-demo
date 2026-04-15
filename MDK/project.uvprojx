@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F411xE</Define>
               <Undefine></Undefine>
-              <IncludePath>../App/Inc;../Libraries/STM32F4xx_HAL_Driver/inc;../Libraries/STM32F4xx_HAL_Driver/inc/Legacy;../Libraries/Device/ST/STM32F4xx/Include;../Libraries/CMSIS/Include</IncludePath>
+              <IncludePath>../App/Inc;../App/Drivers;../Libraries/STM32F4xx_HAL_Driver/inc;../Libraries/STM32F4xx_HAL_Driver/inc/Legacy;../Libraries/Device/ST/STM32F4xx/Include;../Libraries/CMSIS/Include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -414,6 +414,11 @@
               <FileType>1</FileType>
               <FilePath>../App/Src/system_stm32f4xx.c</FilePath>
             </File>
+            <File>
+              <FileName>epd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../App/Drivers/epd.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -483,6 +488,11 @@
               <FileName>stm32f4xx_hal_exti.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Libraries/STM32F4xx_HAL_Driver/src/stm32f4xx_hal_exti.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4xx_hal_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Libraries/STM32F4xx_HAL_Driver/src/stm32f4xx_hal_spi.c</FilePath>
             </File>
           </Files>
         </Group>
